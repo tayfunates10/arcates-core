@@ -1,0 +1,7 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule (^|/)\.git - [F,L]
+RewriteRule ^config\.php$ - [F,L]
+RewriteRule ^uploads/.*\.(php|phtml|phar|php[0-9]*)$ - [F,L,NC]
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
