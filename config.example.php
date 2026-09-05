@@ -23,6 +23,10 @@ return [
         'from' => 'noreply@example.com',
         'to' => 'info@example.com',
     ],
+    'contact' => [
+        'whatsapp_phone' => '',
+        'whatsapp_message' => 'Merhaba, bilgi almak istiyorum.',
+    ],
     'security' => [
         'force_https' => true,
         'max_upload_bytes' => 5242880,
