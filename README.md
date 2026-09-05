@@ -15,6 +15,17 @@ Composer ve framework gerektirmeyen, PHP 8.1+ / MySQL 8 / Vanilla JS tabanlı mo
 5. Kurulumdan sonra `install/install.lock` oluşur ve sihirbaz tekrar çalışmaz.
 6. `scripts/backup.php` için günlük cron tanımlayın ve bir geri yükleme testi yapın.
 
+## Çekirdek altyapı
+- Tek giriş noktası: `public/index.php`
+- Router ve namespaces için dahili autoloader
+- PDO + gerçek prepared statement zorunluluğu
+- Admin/editor rolleri ve `password_hash`/`password_verify`
+- CSRF, XSS escape, HttpOnly/Secure/SameSite=Lax oturum çerezleri
+- 5 başarısız giriş / 15 dakika kilit
+- Canlı ortamda hata gizleme ve `logs/` dosya logu
+- Tek kullanımlık `/install` sihirbazı
+- `scripts/backup.php` ile veritabanı + uploads yedeği
+
 ## Dallar
 - `main`: kararlı sürüm
 - `dev`: entegrasyon dalı
