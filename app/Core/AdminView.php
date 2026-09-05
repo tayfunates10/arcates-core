@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+namespace Arcates\Core;
+final class AdminView
+{
+    public static function requireUser(): array
+    {
+        $auth=App::auth();if(!$auth->check()){header('Location: /'.App::config('app.admin_path','yonetim').'/giris');exit;}return $auth->user()??[];
+    }
+    public static function header(string $title): void
+    {
+        self::requireUser();$a=Security::escape((string)App::config('app.admin_path','yonetim'));echo '<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.Security::escape($title).'</title><link rel="stylesheet" href="/assets/css/admin.css"><body><div class="admin"><nav class="sidebar"><strong>Arcates</strong><a href="/'.$a.'">Panel</a><a href="/'.$a.'/sayfalar">Sayfalar</a><a href="/'.$a.'/menuler">Menüler</a><a href="/'.$a.'/medya">Medya</a></nav><main class="main"><h1>'.Security::escape($title).'</h1>';
+    }
+    public static function footer(): void { echo '</main></div><script src="/assets/js/admin.js" defer></script></body></html>'; }
+}
