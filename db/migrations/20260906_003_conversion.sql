@@ -1,4 +1,4 @@
-CREATE TABLE contact_submissions (
+CREATE TABLE IF NOT EXISTS contact_submissions (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  name VARCHAR(190) NOT NULL,
  email VARCHAR(190) NOT NULL,
@@ -8,13 +8,13 @@ CREATE TABLE contact_submissions (
  created_at DATETIME NOT NULL,
  INDEX idx_contact_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE gallery_categories (
+CREATE TABLE IF NOT EXISTS gallery_categories (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  name VARCHAR(190) NOT NULL,
  slug VARCHAR(190) NOT NULL UNIQUE,
  created_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE gallery_items (
+CREATE TABLE IF NOT EXISTS gallery_items (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  category_id BIGINT UNSIGNED NOT NULL,
  title VARCHAR(190) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE gallery_items (
  INDEX idx_gallery_category (category_id, sort_order),
  CONSTRAINT fk_gallery_category FOREIGN KEY (category_id) REFERENCES gallery_categories(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE blog_posts (
+CREATE TABLE IF NOT EXISTS blog_posts (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  locale VARCHAR(5) NOT NULL,
  title VARCHAR(190) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE blog_posts (
  UNIQUE KEY uq_blog_locale_slug (locale, slug),
  INDEX idx_blog_publish (status, locale, published_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE testimonials (
+CREATE TABLE IF NOT EXISTS testimonials (
  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  name VARCHAR(190) NOT NULL,
  company VARCHAR(190) NULL,
