@@ -3,7 +3,7 @@
 Composer ve framework gerektirmeyen, PHP 8.1+ / MySQL 8 / Vanilla JS tabanlı modüler starter kit.
 
 ## Gereksinimler
-- PHP 8.1+ (`pdo_mysql`, `mbstring`, `fileinfo`, `gd` önerilir)
+- PHP 8.1+ (`pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`)
 - MySQL 8+
 - Apache + `mod_rewrite` veya eşdeğer temiz URL yönlendirmesi
 
@@ -43,13 +43,26 @@ Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash
 - Müsaitlik endpoint'i, rezervasyon formu ve onay e-postası
 - Panelden onay/iptal ve iCal dışa aktarımı
 
+## Ticaret
+- Çok dilli ürün kataloğu, varyant/SKU ve stok
+- Oturum sepeti, checkout ve transaction içinde stok kilidi
+- Tutar bazlı kargo ücret kuralları
+- Yüzde/sabit kupon kampanyaları ve kullanım sayaçları
+- Sipariş yönetimi, ödeme/sipariş durumları ve durum e-postaları
+- Mesafeli satış ve iade sözleşmesi şablonları
+- Giriş korumalı B2B fiyat listesi ve PDF çıktısı
+- Ödeme katmanı yalnız resmi iyzico PHP SDK'sına bağlanır; Arcates kart işleme, imza veya ödeme HTTP istemcisi yazmaz
+
+### iyzico kurulumu
+Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneğin `integrations/iyzipay/` altına koyun. `config.php` içinde `integrations.payment_provider` değerini `iyzico` yapın, `payment_sdk_path` değerini resmi `IyzipayBootstrap.php` dosyasına yönlendirin ve API anahtarlarını yalnız `config.php` içinde tanımlayın. Önce sandbox ortamında başarılı/başarısız ödeme ve tekrar callback testleri tamamlanmadan canlı anahtara geçmeyin.
+
 ## Dallar
 - `main`: kararlı sürüm
 - `dev`: entegrasyon dalı
 - `feature/*`: tek modül geliştirme dalları
 
 ## Güvenlik
-`config.php` commit edilmez. POST formları CSRF korumalıdır; kullanıcı çıktıları escape edilir; upload klasöründe PHP çalıştırılmaz. Form kayıt saklama süresi `security.form_retention_days` ile belirlenir.
+`config.php` commit edilmez. POST formları CSRF korumalıdır; kullanıcı çıktıları escape edilir; upload klasöründe PHP çalıştırılmaz. Form kayıt saklama süresi `security.form_retention_days` ile belirlenir. Siparişte stok satırları kilitlenir ve iptal edilen sipariş stokları yalnız bir kez iade edilir.
 
 ## Test
 ```bash

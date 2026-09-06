@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.0 - 2026-09-06
+- Faz 5: ürün/varyant/stok, sepet ve sipariş akışı, stok kilidi ve iptal stok iadesi, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, ödeme callback'i, sipariş durum e-postaları, mesafeli satış/iade şablonları ve B2B fiyat listesi/PDF eklendi.
+
 ## 0.5.0 - 2026-09-06
 - Faz 4: oda/masa/seans birimleri, müsaitlik, `FOR UPDATE` ile yarış koşuluna dayanıklı çakışma engeli, sezonluk fiyat, rezervasyon formu/e-postası, panel onay/iptal, iCal ve takipli migration çalıştırıcısı eklendi.
 
