@@ -3,7 +3,7 @@
 Composer ve framework gerektirmeyen, PHP 8.1+ / MySQL 8 / Vanilla JS tabanlı modüler starter kit.
 
 ## Gereksinimler
-- PHP 8.1+ (`pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`)
+- PHP 8.1+ (`pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`, `soap`)
 - MySQL 8+
 - Apache + `mod_rewrite` veya eşdeğer temiz URL yönlendirmesi
 
@@ -19,83 +19,31 @@ Composer ve framework gerektirmeyen, PHP 8.1+ / MySQL 8 / Vanilla JS tabanlı mo
 Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash`, CSRF, XSS escape, güvenli session cookie, 5 hata/15 dk giriş limiti, hata logu, takipli migration ve yedekleme içerir.
 
 ## Admin ve içerik
-- Mobil uyumlu yönetim kabuğu
-- Sayfa CRUD: TR/EN/DE/AR, slug, taslak/yayın, meta title/description ve OG görseli
-- Arapça için RTL tema
-- Menü yöneticisi
-- Görsellerde uzantı+MIME+boyut kontrolü, rastgele ad ve WebP yeniden boyutlandırma
-- `/sitemap.xml` ve `/robots.txt`
-- `themes/default` mobil öncelikli tema
-
-## Dönüşüm modülleri
-- İletişim/teklif formu: CSRF, honeypot, sunucu doğrulaması, rate limit ve önceden işaretlenmeyen KVKK açık rızası
-- Form kayıtları yönetim paneli ve e-posta bildirimi
-- Yapılandırılabilir, sayfa bağlamlı WhatsApp CTA
-- Kategori destekli portföy/galeri
-- Çok dilli blog, kategori, etiket ve SEO alanları
-- Referans/yorum yönetimi
-- KVKK, gizlilik, gerekli çerez bildirimi ve süre sonunda form kayıtlarını silme scripti
+Mobil uyumlu yönetim kabuğu; çok dilli sayfa CRUD, medya/WebP, menüler, SEO/sitemap/robots, blog, formlar ve diğer modül yönetimlerini içerir.
 
 ## Rezervasyon
-- Oda, masa ve seans birimleri; kapasite ve temel fiyat
-- Sezonluk fiyat tanımları
-- Transaction + birim satırında `FOR UPDATE` ile aynı tarih aralığında çift rezervasyonun yarış koşulunda da engellenmesi
-- Müsaitlik endpoint'i, rezervasyon formu ve onay e-postası
-- Panelden onay/iptal ve iCal dışa aktarımı
+Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rezervasyon koruması, e-posta, panel onay/iptal ve iCal desteği içerir.
 
 ## Ticaret
-- Çok dilli ürün kataloğu, varyant/SKU ve stok
-- Oturum sepeti, checkout ve transaction içinde stok kilidi
-- Tutar bazlı kargo ücret kuralları
-- Yüzde/sabit kupon kampanyaları ve kullanım sayaçları
-- Sipariş yönetimi, ödeme/sipariş durumları ve durum e-postaları
-- Mesafeli satış ve iade sözleşmesi şablonları
-- Giriş korumalı B2B fiyat listesi ve PDF çıktısı
-- Ödeme katmanı yalnız resmi iyzico PHP SDK'sına bağlanır; Arcates kart işleme, imza veya ödeme HTTP istemcisi yazmaz
+Çok dilli ürün/varyant/stok, sepet, sipariş, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, durum e-postaları, sözleşmeler ve korumalı B2B fiyat listesi/PDF içerir.
 
-### iyzico kurulumu
-Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneğin `integrations/iyzipay/` altına koyun. `config.php` içinde `integrations.payment_provider` değerini `iyzico` yapın, `payment_sdk_path` değerini resmi `IyzipayBootstrap.php` dosyasına yönlendirin ve API anahtarlarını yalnız `config.php` içinde tanımlayın. Önce sandbox ortamında başarılı/başarısız ödeme ve tekrar callback testleri tamamlanmadan canlı anahtara geçmeyin.
+### Kargo API entegrasyonu
+- MNG / DHL eCommerce: güncel REST API Zone akışı; bearer token + IBM Client ID/Secret, `createOrder`, takip ve `createbarcode`/ZPL etiketi.
+- Aras: SOAP `SetOrder`, `GetCargoTransaction`, `GetArasBarcode` üzerinden gönderi, takip ve PDF/ZPL etiketi.
+- Yurtiçi: KOPS `ShippingOrderDispatcherServices`; `createShipment`, `queryShipment` ve yapılandırılabilir etiket operasyonu (`createShipmentWithDelivery`).
+- Sağlayıcı kullanıcı adı, şifre, müşteri numarası ve API anahtarları yalnız `config.php` içinde tutulur.
+- Sipariş taşıyıcıya gönderilirken ilçe, kg, desi ve koli adedi girilir; kargo kaydı `carrier_shipments` tablosunda izlenir.
+- Dış API çağrısı DB transaction içinde tutulmaz; başarılı sağlayıcı dönüşünden sonra yerel kayıt atomik yazılır.
+- Etiket ve takip işlemleri yönetim panelinde POST + CSRF ile korunur.
+- MNG için gerçek 10/11 haneli TC/vergi numarası ve 10 haneli telefon zorunludur; sahte placeholder üretilmez.
+- Canlı kullanım öncesi sağlayıcı test hesabı, API aboneliği ve gerekiyorsa IP beyaz liste kabul testi yapılmalıdır.
 
-## Emlak / ilan
-- TR/EN/DE/AR ilanlar ve satılık/kiralık ayrımı
-- Gayrimenkul tipi, şehir, ilçe, oda, fiyat ve m² filtreleri
-- Kat, m², oda, fiyat ve koordinat alanları
-- Koordinat bulunan ilanlarda OpenStreetMap bağlantısı
-- Yönetim panelinden ilan ekleme ve silme
-
-## QR Menü
-- Restoran/kafe/otel için ayrı menü slug'ları
-- TR/EN/DE/AR kategori ve ürün içerikleri; Arapça görünüm RTL
-- Ürün adı, açıklama, fiyat, para birimi ve güvenli WebP görsel yolu
-- QR kodu dış servise bağlanmadan PHP içinde SVG olarak üretilir
-- `app.url + menu slug + locale` QR kapasitesini aşarsa menü oluşturulurken açık hata verilir
-- Örnek public yollar: `/menu/{slug}/{locale}` ve `/menu/{slug}/qr.svg?locale=tr`
-
-## Gönderi Takip
-- Nakliyat ve lojistik müşterileri için bağımsız takip kodu ve durum zaman çizelgesi
-- Admin panelinden gönderi oluşturma ve konum/durum olayı ekleme
-- Durumlar: oluşturuldu, teslim alındı, yolda, dağıtımda, teslim edildi, iptal ve sorun
-- Public `/gonderi-takip?kod=...` ekranı müşteri adı, telefon, adres veya iç referans gibi PII alanlarını göstermez
-- Public sorgu takip kodu biçimini doğrular ve 10 dakikada 30 sorgu limiti uygular
-- Olay ekleme transaction içinde gönderinin güncel durumu/konumuyla birlikte işlenir
-
-## Hizmet + Fiyatlandırma
-- Klinik, termal, kuaför ve spor salonu gibi sektörler için ortak fiyat tablosu
-- TR/EN/DE/AR hizmet başlığı, slug ve kısa açıklama
-- Hizmet başına birden fazla paket/işlem fiyatı
-- Para birimi, `seans/ay/kişi` gibi birim etiketi, not ve öne çıkarma
-- Arapça public görünüm RTL; tüm kullanıcı verileri escape edilir
-- Yönetim panelinden hizmet ve fiyat satırı ekleme; tüm POST işlemleri CSRF korumalı
-- Public yol: `/hizmet-fiyatlari/{locale}`
-
-## Bayi / Şube Yönetimi
-- Çok noktalı işletmeler için TR/EN/DE/AR şube kayıtları
-- Şube adı, adres, şehir/ilçe, telefon, e-posta, çalışma saatleri ve koordinatlar
-- Şubeye özel hizmet etiketleri
-- Koordinat varsa OpenStreetMap bağlantısı; enlem/boylam sunucu tarafında aralık doğrulamalı
-- Public görünüm Arapça için RTL; telefon/e-posta bağlantıları güvenli biçimde üretilir
-- Yönetim panelinden şube ve şube hizmeti ekleme
-- Public yol: `/subeler/{locale}`
+## Sektörel modüller
+- Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
+- QR Menü: çok dil/RTL, kategori/ürün ve dış servissiz SVG QR.
+- Gönderi Takip: PII göstermeyen public takip, rate limit ve durum zaman çizelgesi.
+- Hizmet + Fiyatlandırma: çok dilli hizmet/paket/birim/para birimi tablosu.
+- Bayi / Şube Yönetimi: çok dilli şube, çalışma saatleri, koordinat/harita ve şube hizmetleri.
 
 ## Dallar
 - `main`: kararlı sürüm
@@ -109,4 +57,4 @@ Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneği
 ```bash
 php tests/run.php
 ```
-CI, PHP 8.1/8.2/8.3 üzerinde sözdizimi ve testleri çalıştırır.
+CI, PHP 8.1/8.2/8.3 üzerinde `pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`, `soap` ile sözdizimi ve testleri çalıştırır.
