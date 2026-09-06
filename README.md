@@ -56,6 +56,21 @@ Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash
 ### iyzico kurulumu
 Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneğin `integrations/iyzipay/` altına koyun. `config.php` içinde `integrations.payment_provider` değerini `iyzico` yapın, `payment_sdk_path` değerini resmi `IyzipayBootstrap.php` dosyasına yönlendirin ve API anahtarlarını yalnız `config.php` içinde tanımlayın. Önce sandbox ortamında başarılı/başarısız ödeme ve tekrar callback testleri tamamlanmadan canlı anahtara geçmeyin.
 
+## Emlak / ilan
+- TR/EN/DE/AR ilanlar ve satılık/kiralık ayrımı
+- Gayrimenkul tipi, şehir, ilçe, oda, fiyat ve m² filtreleri
+- Kat, m², oda, fiyat ve koordinat alanları
+- Koordinat bulunan ilanlarda OpenStreetMap bağlantısı
+- Yönetim panelinden ilan ekleme ve silme
+
+## QR Menü
+- Restoran/kafe/otel için ayrı menü slug'ları
+- TR/EN/DE/AR kategori ve ürün içerikleri; Arapça görünüm RTL
+- Ürün adı, açıklama, fiyat, para birimi ve güvenli WebP görsel yolu
+- QR kodu dış servise bağlanmadan PHP içinde SVG olarak üretilir
+- `app.url + menu slug + locale` QR kapasitesini aşarsa menü oluşturulurken açık hata verilir
+- Örnek public yollar: `/menu/{slug}/{locale}` ve `/menu/{slug}/qr.svg?locale=tr`
+
 ## Dallar
 - `main`: kararlı sürüm
 - `dev`: entegrasyon dalı
