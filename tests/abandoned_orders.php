@@ -19,7 +19,9 @@ if (!OrderService::isAbandonedCandidate($base, $cutoff)) {
 }
 
 $cases = [
-    'fresh' => array_replace($base, ['updated_at' => '2026-09-06 11:59:59']),
+    'fresh' => array_replace($base, ['updated_at' => '2026-09-06 12:00:01']),
+    // Sınır davranışı: kesme noktasına EŞİT kayıt terk edilmiş sayılmaz (karşılaştırma < ).
+    'cutoff-boundary' => array_replace($base, ['updated_at' => '2026-09-06 12:00:00']),
     'paid' => array_replace($base, ['payment_status' => 'paid']),
     'confirmed' => array_replace($base, ['status' => 'confirmed']),
     'released' => array_replace($base, ['stock_released' => 1]),
