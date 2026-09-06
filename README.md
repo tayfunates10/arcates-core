@@ -83,6 +83,16 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 - Toplu gönderim web isteğinde değil `php scripts/newsletter_send.php 50` cron/CLI ile yapılır; başarısız `mail()` çağrısı en fazla 3 kez denenir.
 - Panel `/yonetim/bulten` üzerinden taslak kampanya oluşturulur ve aktif aboneler kuyruğa alınır.
 
+### AI destekli site içi asistan
+- TR/EN/DE/AR ziyaretçiler için yayımlanmış site içeriğine dayalı yardımcı widget.
+- Bağlam yalnız yayımlanmış sayfa/blog ve aktif hizmet-fiyat kayıtlarından oluşturulur; sipariş, rezervasyon, kullanıcı, form ve admin verisi modele verilmez.
+- OpenAI Responses API doğrudan cURL ile kullanılır; Composer bağımlılığı eklenmez. Varsayılan model `gpt-5.6-luna`, model ve endpoint `config.php` üzerinden değiştirilebilir.
+- API isteği `store=false`; konuşma geçmişi, `previous_response_id`, araç/web erişimi veya Arcates içinde konuşma kaydı yoktur.
+- Soru endpointi `POST /asistan/sor`; CSRF, 5 dakikada 12 soru rate-limit, 1000 karakter soru ve sınırlı bağlam uygulanır.
+- Site içeriği model için güvenilmeyen veri olarak tanımlanır; prompt injection metinleri talimat kabul edilmez.
+- Asistan fiyat, müsaitlik, politika veya işlem sonucu uyduramaz ve rezervasyon/ödeme yapmış gibi davranamaz.
+- Widget çıktıları `textContent` ile basılır; `innerHTML` kullanılmaz. Ayrıntılı kurulum ve kabul: `docs/ai-asistan.md`.
+
 ## Sektörel modüller
 - Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
 - QR Menü: çok dil/RTL, kategori/ürün ve dış servissiz SVG QR.
