@@ -118,27 +118,53 @@ final class OrderService
     public static function cancel(int $orderId): void
     {
         App::db()->transaction(function (Database $db) use ($orderId): void {
-            $order = $db->fetch(
-                'SELECT id,status,stock_released FROM orders WHERE id=? FOR UPDATE',
-                [$orderId]
-            );
-            if (!$order) {
-                throw new \RuntimeException('Sipariş bulunamadı.');
-            }
+            $order = self::lockedOrder($db, $orderId);
             self::cancelLocked($db, $order);
         });
+    }
+
+    public static function cancelIfAbandoned(int $orderId, \DateTimeImmutable $cutoff): bool
+    {
+        return App::db()->transaction(function (Database $db) use ($orderId, $cutoff): bool {
+            $order = self::lockedOrder($db, $orderId);
+            if (!self::isAbandonedCandidate($order, $cutoff)) {
+                return false;
+            }
+            $initialized = $db->fetch(
+                "SELECT id FROM payment_attempts WHERE order_id=? AND status='initialized' LIMIT 1",
+                [$orderId]
+            );
+            if ($initialized) {
+                return false;
+            }
+            self::cancelLocked($db, $order);
+            return true;
+        });
+    }
+
+    public static function isAbandonedCandidate(array $order, \DateTimeImmutable $cutoff): bool
+    {
+        if ((string) ($order['status'] ?? '') !== 'pending') {
+            return false;
+        }
+        if (!in_array((string) ($order['payment_status'] ?? ''), ['pending', 'failed'], true)) {
+            return false;
+        }
+        if ((int) ($order['stock_released'] ?? 0) !== 0) {
+            return false;
+        }
+        $updatedAt = \DateTimeImmutable::createFromFormat(
+            'Y-m-d H:i:s',
+            (string) ($order['updated_at'] ?? ''),
+            new \DateTimeZone(date_default_timezone_get())
+        );
+        return $updatedAt instanceof \DateTimeImmutable && $updatedAt < $cutoff;
     }
 
     public static function setStatus(int $orderId, string $status): void
     {
         App::db()->transaction(function (Database $db) use ($orderId, $status): void {
-            $order = $db->fetch(
-                'SELECT id,status,stock_released FROM orders WHERE id=? FOR UPDATE',
-                [$orderId]
-            );
-            if (!$order) {
-                throw new \RuntimeException('Sipariş bulunamadı.');
-            }
+            $order = self::lockedOrder($db, $orderId);
             $current = (string) $order['status'];
             if ($status === $current) {
                 return;
@@ -154,15 +180,32 @@ final class OrderService
         });
     }
 
+    private static function lockedOrder(Database $db, int $orderId): array
+    {
+        $order = $db->fetch(
+            'SELECT id,status,payment_status,stock_released,coupon_code,discount_total,updated_at '
+            . 'FROM orders WHERE id=? FOR UPDATE',
+            [$orderId]
+        );
+        if (!$order) {
+            throw new \RuntimeException('Sipariş bulunamadı.');
+        }
+        return $order;
+    }
+
     private static function cancelLocked(Database $db, array $order): void
     {
         $current = (string) $order['status'];
         if ($current === 'cancelled') {
             return;
         }
+        if ((string) $order['payment_status'] === 'paid') {
+            throw new \RuntimeException('Ödenmiş sipariş doğrudan iptal edilemez; önce ödeme iadesi tamamlanmalıdır.');
+        }
         if (!in_array('cancelled', self::TRANSITIONS[$current] ?? [], true)) {
             throw new \RuntimeException("{$current} durumundaki sipariş iptal edilemez.");
         }
+
         if (!(int) $order['stock_released']) {
             foreach ($db->fetchAll(
                 'SELECT variant_id,quantity FROM order_items WHERE order_id=?',
@@ -175,7 +218,16 @@ final class OrderService
                     );
                 }
             }
+
+            $couponCode = trim((string) ($order['coupon_code'] ?? ''));
+            if ($couponCode !== '' && (float) ($order['discount_total'] ?? 0) > 0) {
+                $db->execute(
+                    'UPDATE coupons SET usage_count=GREATEST(usage_count-1,0) WHERE code=?',
+                    [$couponCode]
+                );
+            }
         }
+
         $db->execute(
             "UPDATE orders SET stock_released=1,status='cancelled',updated_at=NOW() WHERE id=?",
             [(int) $order['id']]
