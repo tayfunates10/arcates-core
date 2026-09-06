@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, dev, 'feature/**', 'claude/**']
+    branches: [main, dev, 'feature/**', 'claude/**', 'test/**']
   pull_request:
     branches: [main, dev]
 
@@ -45,6 +45,9 @@ jobs:
           cp tests/fixtures/config.ci.php config.php
           php tests/runtime_mysql.php
           php tests/runtime_abandoned_mysql.php
+
+      - name: Clean install and HTTP smoke
+        run: bash tests/http_smoke.sh
 
       - name: Readability guard
         run: php tests/readability.php
