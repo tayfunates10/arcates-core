@@ -44,6 +44,17 @@ return [
             'secret_key' => '',
             'base_url' => 'https://sandbox-api.iyzipay.com',
         ],
+        'ai' => [
+            'enabled' => false,
+            'context_chars' => 20000,
+            'openai' => [
+                'base_url' => 'https://api.openai.com/v1',
+                'api_key' => '',
+                'model' => 'gpt-5.6-luna',
+                'max_output_tokens' => 500,
+                'timeout' => 30,
+            ],
+        ],
         'shipping' => [
             'provider' => null,
             'mng' => [
