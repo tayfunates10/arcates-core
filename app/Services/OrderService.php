@@ -22,13 +22,11 @@ final class OrderService
         if (!$cart) {
             throw new \RuntimeException('Sepet boş.');
         }
-
         $normalizedCoupon = self::normalizeCoupon($couponCode);
 
         return App::db()->transaction(function (Database $db) use ($customer, $cart, $normalizedCoupon): array {
             $items = [];
             $subtotal = 0.0;
-
             foreach ($cart as $variantId => $qty) {
                 $qty = max(1, min(99, (int) $qty));
                 $variant = $db->fetch(
@@ -42,7 +40,6 @@ final class OrderService
                 if ((int) $variant['stock'] < $qty) {
                     throw new \RuntimeException('Yetersiz stok: ' . $variant['sku']);
                 }
-
                 $line = (float) $variant['price'] * $qty;
                 $subtotal += $line;
                 $items[] = [
@@ -128,35 +125,17 @@ final class OrderService
             if (!$order) {
                 throw new \RuntimeException('Sipariş bulunamadı.');
             }
-            if ((string) $order['status'] === 'completed') {
-                throw new \RuntimeException('Tamamlanmış sipariş iptal edilemez.');
-            }
-
-            if (!(int) $order['stock_released']) {
-                foreach ($db->fetchAll(
-                    'SELECT variant_id,quantity FROM order_items WHERE order_id=?',
-                    [$orderId]
-                ) as $item) {
-                    if ($item['variant_id']) {
-                        $db->execute(
-                            'UPDATE product_variants SET stock=stock+?,updated_at=NOW() WHERE id=?',
-                            [(int) $item['quantity'], (int) $item['variant_id']]
-                        );
-                    }
-                }
-            }
-
-            $db->execute(
-                "UPDATE orders SET stock_released=1,status='cancelled',updated_at=NOW() WHERE id=?",
-                [$orderId]
-            );
+            self::cancelLocked($db, $order);
         });
     }
 
     public static function setStatus(int $orderId, string $status): void
     {
         App::db()->transaction(function (Database $db) use ($orderId, $status): void {
-            $order = $db->fetch('SELECT id,status FROM orders WHERE id=? FOR UPDATE', [$orderId]);
+            $order = $db->fetch(
+                'SELECT id,status,stock_released FROM orders WHERE id=? FOR UPDATE',
+                [$orderId]
+            );
             if (!$order) {
                 throw new \RuntimeException('Sipariş bulunamadı.');
             }
@@ -168,11 +147,39 @@ final class OrderService
                 throw new \RuntimeException("Geçersiz sipariş durum geçişi: {$current} -> {$status}");
             }
             if ($status === 'cancelled') {
-                self::cancel($orderId);
+                self::cancelLocked($db, $order);
                 return;
             }
             $db->execute('UPDATE orders SET status=?,updated_at=NOW() WHERE id=?', [$status, $orderId]);
         });
+    }
+
+    private static function cancelLocked(Database $db, array $order): void
+    {
+        $current = (string) $order['status'];
+        if ($current === 'cancelled') {
+            return;
+        }
+        if (!in_array('cancelled', self::TRANSITIONS[$current] ?? [], true)) {
+            throw new \RuntimeException("{$current} durumundaki sipariş iptal edilemez.");
+        }
+        if (!(int) $order['stock_released']) {
+            foreach ($db->fetchAll(
+                'SELECT variant_id,quantity FROM order_items WHERE order_id=?',
+                [(int) $order['id']]
+            ) as $item) {
+                if ($item['variant_id']) {
+                    $db->execute(
+                        'UPDATE product_variants SET stock=stock+?,updated_at=NOW() WHERE id=?',
+                        [(int) $item['quantity'], (int) $item['variant_id']]
+                    );
+                }
+            }
+        }
+        $db->execute(
+            "UPDATE orders SET stock_released=1,status='cancelled',updated_at=NOW() WHERE id=?",
+            [(int) $order['id']]
+        );
     }
 
     private static function couponDiscount(Database $db, ?string $code, float $subtotal): float
@@ -205,11 +212,11 @@ final class OrderService
 
     private static function uuid(): string
     {
-        $b = random_bytes(16);
-        $b[6] = chr((ord($b[6]) & 0x0f) | 0x40);
-        $b[8] = chr((ord($b[8]) & 0x3f) | 0x80);
-        $h = bin2hex($b);
-        return substr($h, 0, 8) . '-' . substr($h, 8, 4) . '-' . substr($h, 12, 4)
-            . '-' . substr($h, 16, 4) . '-' . substr($h, 20);
+        $bytes = random_bytes(16);
+        $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
+        $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
+        $hex = bin2hex($bytes);
+        return substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4)
+            . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20);
     }
 }
