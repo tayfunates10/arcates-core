@@ -972,9 +972,23 @@ güncel durum:
 | Bulgu | Commit | Durum |
 |---|---|---|
 | BULGU-01 (kurulum kilidi) | `9c0e288`, `ace67a3` | ✅ **Kapandı.** `Installer` artık `install/` dizinini `mkdir` ile oluşturuyor, `file_put_contents` dönüşünü `=== false` ile kontrol edip hata fırlatıyor, ayrıca `users` tablosunda kayıt varsa kurulumu reddediyor (ikinci savunma katmanı). |
-| BULGU-03 (hız limiti) | `67ffb17` | ⚠️ **Yarım.** Commit yalnız `rate_limit_buckets` tablosunu ekliyor. `RateLimiter::genericAllowed()` hâlâ sayacı `$_SESSION`'da tutuyor, yani tabloyu **hiçbir kod kullanmıyor** ve çerez atarak atlatma aynen sürüyor. Kapanması için `genericAllowed()`'ın bu tabloya yazacak şekilde değiştirilmesi ve asistan anahtarına IP eklenmesi gerekiyor. |
+| BULGU-02 (kupon limiti) | `7773e8d` | ✅ Kupon kodu normalize ediliyor, sipariş durum geçişleri zorunlu kılındı. |
+| BULGU-03 (hız limiti) | `67ffb17`, `1d11cf8` | ✅ `rate_limit_buckets` tablosu eklendi ve `RateLimiter` kalıcı depoya taşındı; IP başına parola püskürtme tavanı eklendi (BULGU-08 de kapandı). |
+| BULGU-04 (ödeme tutarı) | `e51ea43`, `ac0717f` | ✅ `IyzicoGateway::retrieve()` artık `paid_price` ve `currency` döndürüyor; `callback()` kuruş bazında `grand_total` ile karşılaştırıyor. |
+| BULGU-05, 07 (analitik) | `47eb37e` | ✅ `track()` fail-safe hale getirildi ve yol kardinalitesi sınırlandı. |
+| BULGU-08 (giriş limiti) | `1d11cf8` | ✅ IP başına toplam tavan eklendi. |
+| BULGU-12 (durum makinesi) | `7773e8d` | ✅ Geçiş matrisi zorunlu kılındı. |
+| BULGU-17 (ödeme GET/yeniden deneme) | `50e611d`, `ac0717f` | ✅ Ödeme başlatma CSRF korumalı POST'a taşındı; başarısız ödeme siparişi iptal etmek yerine `failed` işaretleyip yeniden deneme sunuyor. |
 
-Diğer 18 bulgu için bu dalda henüz düzeltme yok.
+Kalan bulgular (06, 09, 10, 11, 13, 14, 15, 16, 18, 19, 20) için bu dalda henüz düzeltme yok.
+
+**Yeni açılan konu (BULGU-17 düzeltmesinin yan etkisi):** Ödeme başarısızlığı artık
+`OrderService::cancel()` çağırmıyor, dolayısıyla **stok iade edilmiyor** — yeniden deneme
+için rezerve tutuluyor. Bu doğru bir tercih, ancak terk edilmiş `failed`/`pending`
+siparişlerin stoğunu belirli bir süre sonra serbest bırakan bir temizleme görevi yok;
+`OrderService::cancel()` artık yalnız `setStatus()` üzerinden (admin iptali) çağrılıyor.
+Stok süresiz kilitli kalabilir. Öneri: `scripts/` altına, N saatten eski `pending`/`failed`
+siparişleri iptal edip stoğu iade eden bir cron eklenmeli.
 
 **Regresyon notu:** BULGU-01 düzeltmesi CI'ı kırdı. `tests/security_final.php`,
 kilit yolunu `str_contains($installer,'install/install.lock')` ile arıyordu; düzeltme
