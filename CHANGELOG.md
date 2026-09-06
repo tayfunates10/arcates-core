@@ -9,6 +9,7 @@
 - Kargo API: MNG/DHL eCommerce REST, Aras SOAP ve Yurtiçi KOPS adapterleri; gönderi oluşturma, takip, etiket, panel yönetimi ve credential izolasyonu eklendi.
 - Pazaryeri Senkronu: Trendyol + Hepsiburada stok/fiyat adapterleri, varyant eşleme, yalnız değişen payload, duplicate claim koruması, async batch sonucu, cron ve yönetim paneli eklendi.
 - e-Fatura / e-Arşiv: Uyumsoft BasicIntegration SOAP adapteri, güvenli UBL-TR doğrulama, e-Fatura mükellef sorgusu, gönderim/durum takibi, UUID/fatura no kaydı, send_unknown çift-fatura koruması, portal uzlaştırması ve cron eklendi.
+- Muhasebe Aktarımı: Logo/Netsis NetOpenX, Mikro API ve Paraşüt v4 adapterleri; güvenli JSON şablon profilleri, sipariş/kalem placeholder'ları, credential izolasyonu, SHA-256 payload kaydı ve send_unknown çift-kayıt koruması eklendi.
 
 ## 0.6.0 - 2026-09-06
 - Faz 5: ürün/varyant/stok, sepet ve sipariş akışı, stok kilidi ve iptal stok iadesi, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, ödeme callback'i, sipariş durum e-postaları, mesafeli satış/iade şablonları ve B2B fiyat listesi/PDF eklendi.
