@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.0 - 2026-09-06
+- Faz 4: oda/masa/seans birimleri, müsaitlik, `FOR UPDATE` ile yarış koşuluna dayanıklı çakışma engeli, sezonluk fiyat, rezervasyon formu/e-postası, panel onay/iptal, iCal ve takipli migration çalıştırıcısı eklendi.
+
 ## 0.4.0 - 2026-09-06
 - Faz 3: KVKK/onaylı honeypot ve rate-limit iletişim formu, form kayıt paneli/e-posta bildirimi, WhatsApp CTA, kategorili portföy, kategori/etiketli blog, referanslar, çerez bildirimi ve form saklama temizliği eklendi.
 
