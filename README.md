@@ -22,6 +22,7 @@ cPanel/shared-hosting ortamında document-root'u `public/` yapamıyorsanız proj
 5. Güncellemelerde `php scripts/migrate.php` çalıştırın.
 6. `scripts/backup.php` için günlük cron, `scripts/purge_forms.php` için form saklama politikası cron'u tanımlayın ve geri yükleme testi yapın.
 7. Ödenmemiş terk edilmiş sipariş stokları için `php scripts/release_abandoned_orders.php` cron'u tanımlayın. Varsayılan eşik 1440 dakika (24 saat), batch 100'dür.
+8. Kalıcı public rate-limit kayıtlarının büyümemesi için günlük `php scripts/purge_rate_limits.php 48` cron'u tanımlayın; varsayılan politika 48 saatten eski bucket'ları siler.
 
 ## Çekirdek altyapı
 Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash`, CSRF, XSS escape, güvenli session cookie, kalıcı public rate-limit, hesap+IP giriş limiti, hata logu, takipli migration ve yedekleme içerir.
