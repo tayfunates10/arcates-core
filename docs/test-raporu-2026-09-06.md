@@ -964,6 +964,31 @@ gözden kaçmış görünüyor (BULGU-02'deki normalize edilmemiş `$couponCode`
 
 ---
 
+## 4.1 Düzeltme durumu (bu dalda, rapor sonrası)
+
+Rapor `main` (`b804eda`) durumunu anlatır. Rapordan sonra bu dala düzeltme commit'leri geldi;
+güncel durum:
+
+| Bulgu | Commit | Durum |
+|---|---|---|
+| BULGU-01 (kurulum kilidi) | `9c0e288`, `ace67a3` | ✅ **Kapandı.** `Installer` artık `install/` dizinini `mkdir` ile oluşturuyor, `file_put_contents` dönüşünü `=== false` ile kontrol edip hata fırlatıyor, ayrıca `users` tablosunda kayıt varsa kurulumu reddediyor (ikinci savunma katmanı). |
+| BULGU-03 (hız limiti) | `67ffb17` | ⚠️ **Yarım.** Commit yalnız `rate_limit_buckets` tablosunu ekliyor. `RateLimiter::genericAllowed()` hâlâ sayacı `$_SESSION`'da tutuyor, yani tabloyu **hiçbir kod kullanmıyor** ve çerez atarak atlatma aynen sürüyor. Kapanması için `genericAllowed()`'ın bu tabloya yazacak şekilde değiştirilmesi ve asistan anahtarına IP eklenmesi gerekiyor. |
+
+Diğer 18 bulgu için bu dalda henüz düzeltme yok.
+
+**Regresyon notu:** BULGU-01 düzeltmesi CI'ı kırdı. `tests/security_final.php`,
+kilit yolunu `str_contains($installer,'install/install.lock')` ile arıyordu; düzeltme
+yolu `LOCK_DIR` + `LOCK_FILE` sabitlerine böldüğü için bu birebir metin artık kaynakta
+geçmiyordu ve **doğru bir düzeltme testi kırdı**. Kontrol, metin araması yerine davranış
+doğrulamasıyla değiştirildi: `Installer::LOCK_FILE` sabiti reflection ile okunup çözülen
+yolun `install/install.lock` olduğu, ayrıca `mkdir` ve yazma-hatası kontrolünün varlığı
+doğrulanıyor. Yeni kontrolün boş olmadığı üç regresyon senaryosuyla sınandı (mkdir'in
+kaldırılması, yazma kontrolünün kaldırılması, yolun değiştirilmesi — üçü de yakalanıyor).
+Bu, raporun 8.2 bölümündeki tezin somut örneği: metin arayan testler doğru düzeltmeleri
+cezalandırır, gerçek hataları ise kaçırır.
+
+---
+
 ## 5. Bulgu × dal matrisi
 
 `VAR` = bulgu bu dalda mevcut · `ok` = etkilenmiyor · `-` = ilgili modül bu dalda yok
