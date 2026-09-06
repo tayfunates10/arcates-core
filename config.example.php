@@ -68,7 +68,25 @@ return [
                 'label_operation' => 'createShipmentWithDelivery',
             ],
         ],
-        'marketplace' => [],
+        'marketplace' => [
+            'trendyol' => [
+                'base_url' => 'https://apigw.trendyol.com',
+                'seller_id' => '',
+                'api_key' => '',
+                'api_secret' => '',
+                'storefront_code' => '',
+                'user_agent' => 'ArcatesCore/0.7',
+            ],
+            'hepsiburada' => [
+                'base_url' => 'https://listing-external.hepsiburada.com',
+                'merchant_id' => '',
+                'username' => '',
+                'password' => '',
+                'user_agent' => 'ArcatesCore',
+                'dispatch_time' => 2,
+                'max_purchasable_quantity' => 1000,
+            ],
+        ],
         'einvoice' => [],
     ],
 ];
