@@ -38,6 +38,18 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 - MNG için gerçek 10/11 haneli TC/vergi numarası ve 10 haneli telefon zorunludur; sahte placeholder üretilmez.
 - Canlı kullanım öncesi sağlayıcı test hesabı, API aboneliği ve gerekiyorsa IP beyaz liste kabul testi yapılmalıdır.
 
+### Pazaryeri stok/fiyat senkronu
+- Trendyol ve Hepsiburada için ayrı gateway adapterleri.
+- Arcates varyantı dış SKU/barkod/HBSKU ile eşlenir; fiyat katsayısı ve güvenlik stoğu tanımlanabilir.
+- Yalnız değişen payload gönderilir; `last_payload_hash` tekrar gönderimi engeller.
+- Eşzamanlı cron/manuel çalıştırmada `claim_token` aynı eşlemenin iki kez gönderilmesini önler.
+- Trendyol batch boyutu 1000, Hepsiburada batch boyutu 4000 ile sınırlıdır.
+- Hepsiburada aynı anda 5 bekleyen batch olduğunda yeni upload durdurulur.
+- Asenkron batch sonuçları ayrıca sorgulanır; kalem bazlı hata eşleme üzerinde saklanır.
+- Yönetim paneli `/yonetim/pazaryeri`; cron: `php scripts/marketplace_sync.php all`.
+- API credential'ları yalnız `config.php` içinde tutulur; canlıya geçmeden önce test/SIT kabulü zorunludur.
+- Ayrıntılı kabul rehberi: `docs/pazaryeri-entegrasyon.md`.
+
 ## Sektörel modüller
 - Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
 - QR Menü: çok dil/RTL, kategori/ürün ve dış servissiz SVG QR.

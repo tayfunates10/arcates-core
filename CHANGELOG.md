@@ -7,6 +7,7 @@
 - Hizmet + Fiyatlandırma: çok dilli hizmetler, paket/işlem fiyatları, para birimi, birim etiketi ve öne çıkarma destekli public/admin tablo eklendi.
 - Bayi / Şube Yönetimi: çok dilli şube kartları, iletişim/çalışma saati/koordinat alanları, OpenStreetMap ve şubeye özel hizmetler eklendi.
 - Kargo API: MNG/DHL eCommerce REST, Aras SOAP ve Yurtiçi KOPS adapterleri; gönderi oluşturma, takip, etiket, panel yönetimi ve credential izolasyonu eklendi.
+- Pazaryeri Senkronu: Trendyol + Hepsiburada stok/fiyat adapterleri, varyant eşleme, yalnız değişen payload, duplicate claim koruması, async batch sonucu, cron ve yönetim paneli eklendi.
 
 ## 0.6.0 - 2026-09-06
 - Faz 5: ürün/varyant/stok, sepet ve sipariş akışı, stok kilidi ve iptal stok iadesi, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, ödeme callback'i, sipariş durum e-postaları, mesafeli satış/iade şablonları ve B2B fiyat listesi/PDF eklendi.
