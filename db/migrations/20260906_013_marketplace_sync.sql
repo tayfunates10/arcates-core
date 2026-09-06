@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS marketplace_mappings (
  last_payload_hash CHAR(64) NULL,
  pending_payload_hash CHAR(64) NULL,
  pending_batch_id BIGINT UNSIGNED NULL,
+ claim_token CHAR(32) NULL,
+ claimed_at DATETIME NULL,
  last_status VARCHAR(40) NULL,
  last_error VARCHAR(500) NULL,
  last_synced_at DATETIME NULL,
@@ -19,6 +21,7 @@ CREATE TABLE IF NOT EXISTS marketplace_mappings (
  UNIQUE KEY uq_marketplace_mapping (variant_id,provider),
  INDEX idx_marketplace_provider (provider,is_active),
  INDEX idx_marketplace_pending (provider,pending_batch_id),
+ INDEX idx_marketplace_claim (provider,claim_token,claimed_at),
  CONSTRAINT fk_marketplace_variant FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
