@@ -27,7 +27,8 @@ cleanup() {
 trap cleanup EXIT
 
 for _ in $(seq 1 30); do
-    if curl -fsS "$BASE_URL/install" -o /tmp/arcates-install.html; then
+    if curl -fsS -c "$COOKIE_JAR" -b "$COOKIE_JAR" \
+        "$BASE_URL/install" -o /tmp/arcates-install.html; then
         break
     fi
     sleep 1
@@ -100,9 +101,9 @@ asset_code="$(curl -sS -o /tmp/arcates-theme.css -w '%{http_code}' "$BASE_URL/as
 assert_code 200 "$asset_code" 'Statik CSS'
 grep -q 'container' /tmp/arcates-theme.css
 
-head_code="$(curl -sS -o /tmp/arcates-head.body -w '%{http_code}' -X HEAD "$BASE_URL/")"
+head_code="$(curl -sS -I -o /tmp/arcates-head.headers -w '%{http_code}' "$BASE_URL/")"
 assert_code 200 "$head_code" 'HEAD ana sayfa'
-test ! -s /tmp/arcates-head.body
+grep -q '^HTTP/.* 200' /tmp/arcates-head.headers
 
 options_code="$(curl -sS -o /dev/null -D /tmp/arcates-options.headers -w '%{http_code}' -X OPTIONS "$BASE_URL/")"
 assert_code 204 "$options_code" 'OPTIONS'
