@@ -4,6 +4,7 @@
 - Emlak: çok dilli satılık/kiralık ilan, şehir/ilçe/oda/fiyat/m² filtreleri, koordinat ve OpenStreetMap bağlantısı ile yönetim CRUD'u eklendi.
 - QR Menü: TR/EN/DE/AR kategori ve ürünler, RTL görünüm, yönetim ekranı, güvenli WebP yolu ve dış servissiz SVG QR üretimi eklendi.
 - Gönderi Takip: PII göstermeyen public takip sorgusu, rate limit, admin gönderi/olay yönetimi ve transaction ile tutarlı durum zaman çizelgesi eklendi.
+- Hizmet + Fiyatlandırma: çok dilli hizmetler, paket/işlem fiyatları, para birimi, birim etiketi ve öne çıkarma destekli public/admin tablo eklendi.
 
 ## 0.6.0 - 2026-09-06
 - Faz 5: ürün/varyant/stok, sepet ve sipariş akışı, stok kilidi ve iptal stok iadesi, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, ödeme callback'i, sipariş durum e-postaları, mesafeli satış/iade şablonları ve B2B fiyat listesi/PDF eklendi.
