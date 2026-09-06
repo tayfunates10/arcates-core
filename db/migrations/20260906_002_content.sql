@@ -1,0 +1,33 @@
+CREATE TABLE IF NOT EXISTS pages (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ locale VARCHAR(5) NOT NULL,
+ title VARCHAR(190) NOT NULL,
+ slug VARCHAR(190) NOT NULL,
+ body MEDIUMTEXT NOT NULL,
+ status ENUM('draft','published') NOT NULL DEFAULT 'draft',
+ meta_title VARCHAR(190) NULL,
+ meta_description VARCHAR(320) NULL,
+ og_image VARCHAR(255) NULL,
+ created_at DATETIME NOT NULL,
+ updated_at DATETIME NOT NULL,
+ UNIQUE KEY uq_pages_locale_slug (locale, slug),
+ INDEX idx_pages_status (status, locale)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS media (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ path VARCHAR(255) NOT NULL,
+ alt_text VARCHAR(255) NOT NULL DEFAULT '',
+ width INT UNSIGNED NOT NULL,
+ height INT UNSIGNED NOT NULL,
+ mime VARCHAR(80) NOT NULL,
+ created_at DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS menus (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ locale VARCHAR(5) NOT NULL,
+ label VARCHAR(190) NOT NULL,
+ url VARCHAR(255) NOT NULL,
+ sort_order INT NOT NULL DEFAULT 0,
+ created_at DATETIME NOT NULL,
+ INDEX idx_menu_locale_order (locale, sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

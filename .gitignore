@@ -1,0 +1,10 @@
+config.php
+/uploads/*
+!/uploads/.htaccess
+!/uploads/.gitkeep
+/logs/*
+!/logs/.gitkeep
+/integrations/iyzipay/
+.DS_Store
+*.log
+.env
