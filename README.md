@@ -3,7 +3,7 @@
 Composer ve framework gerektirmeyen, PHP 8.1+ / MySQL 8 / Vanilla JS tabanlı modüler starter kit.
 
 ## Gereksinimler
-- PHP 8.1+ (`pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`, `soap`)
+- PHP 8.1+ (`pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`, `soap`, `xml`)
 - MySQL 8+
 - Apache + `mod_rewrite` veya eşdeğer temiz URL yönlendirmesi
 
@@ -28,27 +28,31 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 Çok dilli ürün/varyant/stok, sepet, sipariş, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, durum e-postaları, sözleşmeler ve korumalı B2B fiyat listesi/PDF içerir.
 
 ### Kargo API entegrasyonu
-- MNG / DHL eCommerce: güncel REST API Zone akışı; bearer token + IBM Client ID/Secret, `createOrder`, takip ve `createbarcode`/ZPL etiketi.
-- Aras: SOAP `SetOrder`, `GetCargoTransaction`, `GetArasBarcode` üzerinden gönderi, takip ve PDF/ZPL etiketi.
-- Yurtiçi: KOPS `ShippingOrderDispatcherServices`; `createShipment`, `queryShipment` ve yapılandırılabilir etiket operasyonu (`createShipmentWithDelivery`).
-- Sağlayıcı kullanıcı adı, şifre, müşteri numarası ve API anahtarları yalnız `config.php` içinde tutulur.
-- Sipariş taşıyıcıya gönderilirken ilçe, kg, desi ve koli adedi girilir; kargo kaydı `carrier_shipments` tablosunda izlenir.
-- Dış API çağrısı DB transaction içinde tutulmaz; başarılı sağlayıcı dönüşünden sonra yerel kayıt atomik yazılır.
-- Etiket ve takip işlemleri yönetim panelinde POST + CSRF ile korunur.
-- MNG için gerçek 10/11 haneli TC/vergi numarası ve 10 haneli telefon zorunludur; sahte placeholder üretilmez.
-- Canlı kullanım öncesi sağlayıcı test hesabı, API aboneliği ve gerekiyorsa IP beyaz liste kabul testi yapılmalıdır.
+- MNG / DHL eCommerce: REST API Zone; gönderi, takip ve ZPL barkod.
+- Aras: SOAP gönderi/takip/PDF-ZPL barkod.
+- Yurtiçi: KOPS SOAP gönderi/takip/yapılandırılabilir etiket.
+- Credential'lar yalnız `config.php` içindedir; dış API çağrısı DB transaction içinde tutulmaz.
+- Ayrıntılı canlı kabul: `docs/kargo-entegrasyon.md`.
 
 ### Pazaryeri stok/fiyat senkronu
-- Trendyol ve Hepsiburada için ayrı gateway adapterleri.
-- Arcates varyantı dış SKU/barkod/HBSKU ile eşlenir; fiyat katsayısı ve güvenlik stoğu tanımlanabilir.
-- Yalnız değişen payload gönderilir; `last_payload_hash` tekrar gönderimi engeller.
-- Eşzamanlı cron/manuel çalıştırmada `claim_token` aynı eşlemenin iki kez gönderilmesini önler.
-- Trendyol batch boyutu 1000, Hepsiburada batch boyutu 4000 ile sınırlıdır.
-- Hepsiburada aynı anda 5 bekleyen batch olduğunda yeni upload durdurulur.
-- Asenkron batch sonuçları ayrıca sorgulanır; kalem bazlı hata eşleme üzerinde saklanır.
-- Yönetim paneli `/yonetim/pazaryeri`; cron: `php scripts/marketplace_sync.php all`.
-- API credential'ları yalnız `config.php` içinde tutulur; canlıya geçmeden önce test/SIT kabulü zorunludur.
-- Ayrıntılı kabul rehberi: `docs/pazaryeri-entegrasyon.md`.
+- Trendyol ve Hepsiburada gateway adapterleri; varyant ↔ dış SKU/barkod/HBSKU eşlemesi.
+- Fiyat katsayısı ve güvenlik stoğu; yalnız değişen SHA-256 payload gönderimi.
+- `claim_token` eşzamanlı duplicate push'ı engeller; asenkron batch sonuçları kalem bazında saklanır.
+- Trendyol batch sınırı 1000; Hepsiburada 4000 ve en fazla 5 pending upload.
+- Panel `/yonetim/pazaryeri`; cron `php scripts/marketplace_sync.php all`.
+- Ayrıntılı kabul: `docs/pazaryeri-entegrasyon.md`.
+
+### e-Fatura / e-Arşiv
+- Uyumsoft BasicIntegration SOAP adapteri; `IsEInvoiceUser`, `SendInvoice`, `QueryOutboxInvoiceStatus`.
+- Arcates vergi/KDV oranı belirlemez ve yasal UBL-TR üretmez; hazır UBL-TR XML'i entegratöre taşır.
+- XML iyi biçimli olmalı; DTD/ENTITY reddedilir ve `LIBXML_NONET` kullanılır.
+- Siparişte gerçek 10/11 haneli VKN/TCKN ve `paid` ödeme durumu zorunludur.
+- Mükellefiyet gerçek zamanlı sorgulanır; e-Arşiv için `ProfileID=EARSIVFATURA` zorunlu, profil Arcates tarafından değiştirilmez.
+- UBL XML public dosya sistemine yazılmaz; `e_documents` içinde SHA-256 özetiyle saklanır.
+- Uyumsoft UUID, fatura no, senaryo ve durum kodları saklanır; cron `php scripts/edocument_status.php`.
+- Ağ sonucu belirsizse `send_unknown` durumu tekrar gönderimi engeller; portal UUID bağlama veya portalda belge olmadığını açık onaylama ile uzlaştırılır.
+- Credential'lar yalnız `config.php` içinde tutulur.
+- Ayrıntılı test/canlı kabul: `docs/e-belge-entegrasyon.md`.
 
 ## Sektörel modüller
 - Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
@@ -69,4 +73,4 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 ```bash
 php tests/run.php
 ```
-CI, PHP 8.1/8.2/8.3 üzerinde `pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`, `soap` ile sözdizimi ve testleri çalıştırır.
+CI, PHP 8.1/8.2/8.3 üzerinde `pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`, `soap`, `xml` ile sözdizimi ve testleri çalıştırır.
