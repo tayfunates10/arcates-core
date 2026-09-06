@@ -12,10 +12,11 @@ Composer ve framework gerektirmeyen, PHP 8.1+ / MySQL 8 / Vanilla JS tabanlı mo
 2. Veritabanı bilgilerini, `app.url`, e-posta ve WhatsApp ayarlarını düzenleyin.
 3. Web kökünü `public/` klasörüne yönlendirin.
 4. `/install` ile ilk admin hesabını oluşturun; işlem sonrası `install/install.lock` tekrar kurulumu engeller.
-5. `scripts/backup.php` için günlük cron, `scripts/purge_forms.php` için form saklama politikası cron'u tanımlayın ve geri yükleme testi yapın.
+5. Güncellemelerde `php scripts/migrate.php` çalıştırın.
+6. `scripts/backup.php` için günlük cron, `scripts/purge_forms.php` için form saklama politikası cron'u tanımlayın ve geri yükleme testi yapın.
 
 ## Çekirdek altyapı
-Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash`, CSRF, XSS escape, güvenli session cookie, 5 hata/15 dk giriş limiti, hata logu ve yedekleme içerir.
+Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash`, CSRF, XSS escape, güvenli session cookie, 5 hata/15 dk giriş limiti, hata logu, takipli migration ve yedekleme içerir.
 
 ## Admin ve içerik
 - Mobil uyumlu yönetim kabuğu
@@ -34,6 +35,13 @@ Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash
 - Çok dilli blog, kategori, etiket ve SEO alanları
 - Referans/yorum yönetimi
 - KVKK, gizlilik, gerekli çerez bildirimi ve süre sonunda form kayıtlarını silme scripti
+
+## Rezervasyon
+- Oda, masa ve seans birimleri; kapasite ve temel fiyat
+- Sezonluk fiyat tanımları
+- Transaction + birim satırında `FOR UPDATE` ile aynı tarih aralığında çift rezervasyonun yarış koşulunda da engellenmesi
+- Müsaitlik endpoint'i, rezervasyon formu ve onay e-postası
+- Panelden onay/iptal ve iCal dışa aktarımı
 
 ## Dallar
 - `main`: kararlı sürüm
