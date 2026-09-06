@@ -31,6 +31,11 @@ return [
         'force_https' => true,
         'max_upload_bytes' => 5242880,
         'form_retention_days' => 180,
+        // Forwarded IP/protocol headers are trusted only from these exact proxy IPs.
+        'trusted_proxies' => [],
+    ],
+    'analytics' => [
+        'daily_path_limit' => 500,
     ],
     'newsletter' => [
         'secret' => '',
