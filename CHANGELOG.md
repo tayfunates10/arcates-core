@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased - Faz 6
+## 0.7.0 - 2026-09-06
 - Emlak: çok dilli satılık/kiralık ilan, şehir/ilçe/oda/fiyat/m² filtreleri, koordinat ve OpenStreetMap bağlantısı ile yönetim CRUD'u eklendi.
 - QR Menü: TR/EN/DE/AR kategori ve ürünler, RTL görünüm, yönetim ekranı, güvenli WebP yolu ve dış servissiz SVG QR üretimi eklendi.
 - Gönderi Takip: PII göstermeyen public takip sorgusu, rate limit, admin gönderi/olay yönetimi ve transaction ile tutarlı durum zaman çizelgesi eklendi.
@@ -13,6 +13,7 @@
 - Ziyaretçi İstatistikleri: IP/çerez/user-id saklamayan günlük agregasyon, DNT/bot/admin hariç tutma ve 7/30/90 günlük admin raporu eklendi.
 - E-posta Bülteni: double opt-in, hashlenmiş onay token'ı, HMAC ayrılma bağlantısı, CSRF/honeypot/rate-limit, kampanya kuyruğu ve cron ile kontrollü toplu gönderim eklendi.
 - AI Site Asistanı: TR/EN/DE/AR widget, yalnız yayımlanmış içerikle grounding, OpenAI Responses `store=false`, CSRF/rate-limit, prompt-injection sınırı ve konuşma saklamayan mahremiyet odaklı akış eklendi.
+- Final release kapısı: kök güvenlik listesini doğrulayan `tests/security_final.php`, 400 satır sınırı ve canlı ortam kabul rehberi eklendi.
 
 ## 0.6.0 - 2026-09-06
 - Faz 5: ürün/varyant/stok, sepet ve sipariş akışı, stok kilidi ve iptal stok iadesi, kargo ücret kuralları, kuponlar, resmi iyzico PHP SDK adaptörü, ödeme callback'i, sipariş durum e-postaları, mesafeli satış/iade şablonları ve B2B fiyat listesi/PDF eklendi.
