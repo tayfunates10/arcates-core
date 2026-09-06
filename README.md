@@ -88,6 +88,15 @@ Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneği
 - Yönetim panelinden hizmet ve fiyat satırı ekleme; tüm POST işlemleri CSRF korumalı
 - Public yol: `/hizmet-fiyatlari/{locale}`
 
+## Bayi / Şube Yönetimi
+- Çok noktalı işletmeler için TR/EN/DE/AR şube kayıtları
+- Şube adı, adres, şehir/ilçe, telefon, e-posta, çalışma saatleri ve koordinatlar
+- Şubeye özel hizmet etiketleri
+- Koordinat varsa OpenStreetMap bağlantısı; enlem/boylam sunucu tarafında aralık doğrulamalı
+- Public görünüm Arapça için RTL; telefon/e-posta bağlantıları güvenli biçimde üretilir
+- Yönetim panelinden şube ve şube hizmeti ekleme
+- Public yol: `/subeler/{locale}`
+
 ## Dallar
 - `main`: kararlı sürüm
 - `dev`: entegrasyon dalı
