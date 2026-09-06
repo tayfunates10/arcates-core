@@ -1,0 +1,44 @@
+# Arcates Core - Nginx örneği
+# Yolları ve PHP-FPM socket'ini sunucunuza göre değiştirin.
+
+server {
+    listen 80;
+    server_name example.com www.example.com;
+
+    root /var/www/arcates/public;
+    index index.php;
+
+    # Uygulamanın yüklediği dosyalar proje kökündeki uploads/ altında tutulur.
+    # PHP/script dosyalarını bu alias üzerinden ASLA çalıştırmayın.
+    location ^~ /uploads/ {
+        alias /var/www/arcates/uploads/;
+        autoindex off;
+        try_files $uri =404;
+
+        location ~* \.(?:php|phtml|phar|php[0-9]*)$ {
+            deny all;
+            return 403;
+        }
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+
+    # Dot-file ve gizli kaynaklar document-root dışında olmalı; yine de savunma katmanı.
+    location ~ /\. {
+        deny all;
+    }
+
+    location ~* ^/(?:config\.php|app|db|logs|tests|scripts|install)/ {
+        deny all;
+        return 404;
+    }
+}
