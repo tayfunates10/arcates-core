@@ -20,6 +20,14 @@ final class Mailer
  {
   $to=self::headerSafe((string)($order['email']??''));if($to==='')return false;$body="Sipariş: {$order['public_code']}\nSipariş durumu: {$order['status']}\nÖdeme durumu: {$order['payment_status']}\nToplam: {$order['grand_total']} TL";return self::send($to,'Sipariş durumunuz güncellendi',$body);
  }
+ public static function newsletterConfirmation(string $to,string $url): bool
+ {
+  $body="E-posta bülteni aboneliğinizi onaylamak için aşağıdaki bağlantıyı açın. Bağlantı 48 saat geçerlidir.\n\n{$url}\n\nBu isteği siz yapmadıysanız bağlantıyı kullanmayın.";return self::send($to,'Bülten aboneliğinizi onaylayın',$body);
+ }
+ public static function newsletter(string $to,string $subject,string $body,string $unsubscribeUrl): bool
+ {
+  return self::send($to,$subject,rtrim($body)."\n\n---\nBu e-postaları almak istemiyorsanız abonelikten ayrılın:\n{$unsubscribeUrl}");
+ }
  private static function send(string $to,string $subject,string $body,string $replyTo=''): bool
  {
   $headers=['From: '.self::headerSafe((string)App::config('mail.from','noreply@localhost')),'Content-Type: text/plain; charset=UTF-8'];if($replyTo!=='')$headers[]='Reply-To: '.self::headerSafe($replyTo);$ok=@mail(self::headerSafe($to),self::headerSafe($subject),$body,implode("\r\n",$headers));if(!$ok)Logger::error('Mail failed',['to'=>$to,'subject'=>$subject]);return $ok;

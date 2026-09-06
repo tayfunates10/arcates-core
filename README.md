@@ -73,6 +73,16 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 - Ham olay tablosu yerine `analytics_daily` içinde gün/path/referrer bazında sayaç artırılır.
 - Panel `/yonetim/istatistik`; 7/30/90 günlük toplam, günlük trafik, popüler sayfalar ve kaynaklar gösterilir.
 
+### E-posta bülteni
+- Public `/bulten` formu CSRF, honeypot, rate-limit ve açık abonelik onayıyla korunur.
+- Double opt-in kullanılır; 256-bit rastgele onay token'ının yalnız SHA-256 özeti DB'de tutulur ve bağlantı 48 saat geçerlidir.
+- IP, takip çerezi veya düz unsubscribe token saklanmaz.
+- Ayrılma linki `newsletter.secret` ile HMAC-SHA256 imzalanır; secret yalnız `config.php` içindedir ve en az 32 karakter olmalıdır.
+- Kampanya yalnız `active` abonelere kuyruğa alınır; gönderim anında abonelik durumu tekrar kontrol edilir.
+- Her bülten düz metin ayrılma bağlantısı içerir; ayrılmış kullanıcı teslimatı `skipped` olur.
+- Toplu gönderim web isteğinde değil `php scripts/newsletter_send.php 50` cron/CLI ile yapılır; başarısız `mail()` çağrısı en fazla 3 kez denenir.
+- Panel `/yonetim/bulten` üzerinden taslak kampanya oluşturulur ve aktif aboneler kuyruğa alınır.
+
 ## Sektörel modüller
 - Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
 - QR Menü: çok dil/RTL, kategori/ürün ve dış servissiz SVG QR.
