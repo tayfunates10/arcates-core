@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS e_documents (
  external_scenario VARCHAR(80) NULL,
  status VARCHAR(40) NOT NULL DEFAULT 'prepared',
  status_code VARCHAR(40) NULL,
+ claim_token CHAR(32) NULL,
+ claimed_at DATETIME NULL,
  last_error VARCHAR(1000) NULL,
  sent_at DATETIME NULL,
  checked_at DATETIME NULL,
@@ -23,5 +25,6 @@ CREATE TABLE IF NOT EXISTS e_documents (
  UNIQUE KEY uq_edoc_local_id (local_document_id),
  INDEX idx_edoc_status (provider,status,created_at),
  INDEX idx_edoc_external_uuid (external_uuid),
+ INDEX idx_edoc_claim (claim_token,claimed_at),
  CONSTRAINT fk_edoc_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
