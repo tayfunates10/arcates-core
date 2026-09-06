@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.1 - 2026-09-06
+- PR #22 gelişmiş kullanım/runtime denetiminde bulunan 20 bulgunun tamamı için düzeltme veya kalıcı CI koruması eklendi.
+- Kurulum kilidi gerçek dosya sistemi davranışıyla güvenli hale getirildi; kilit dizini oluşturma/yazma hataları fail-closed, mevcut kullanıcı bulunan sistemde yeniden kurulum reddediliyor.
+- Public rate-limit kalıcı depoya taşındı; çerez silme ile atlatma kapatıldı ve girişte IP başına password-spray tavanı eklendi.
+- Kupon kodu tek noktada normalize ediliyor; kullanım sayacı/raporlama aynı kodu kullanıyor. İptalde kupon hakkı idempotent biçimde geri veriliyor.
+- iyzico callback'inde tahsil edilen tutar ve para birimi sipariş toplamıyla doğrulanıyor. Ödeme başlatma POST+CSRF oldu; başarısız ödeme yeniden denenebilir.
+- Sipariş durum geçiş matrisi zorunlu; cancelled terminal. Paid sipariş refund tamamlanmadan doğrudan iptal edilemiyor.
+- Eski, ödenmemiş ve güvenle serbest bırakılabilir siparişler için `scripts/release_abandoned_orders.php` cron'u eklendi; initialized ödeme denemeleri otomatik iptal edilmiyor.
+- Analitik fail-safe hale getirildi; 404/kontrol karakterleri ve sınırsız path kardinalitesi engellendi.
+- CSRF 419 durumu korunuyor; temalı/yerelleştirilmiş 404/5xx hata sayfaları ve HEAD/OPTIONS protokol desteği eklendi.
+- Unicode slug, merkezî TR/EN/DE/AR çeviri katmanı ve RTL tutarlılığı iyileştirildi.
+- AI asistanında ziyaretçi sorusu ve site içeriği yapısal olarak ayrıldı; beklenmeyen DB/altyapı hataları istemciye sızdırılmıyor.
+- Muhasebe şablonlarına verilen sipariş verisi izin listesine indirildi ve iç içe `$each` genişlemesi sınırlandı.
+- Sepette farklı varyant sayısı 100 ile sınırlandı; güvenilir proxy yapılandırması ile istemci IP çözümü sertleştirildi.
+- Nginx dağıtım örneği ve `public/` document-root zorunluluğu belgelendi.
+- CI artık PHP 8.1/8.2/8.3 yanında gerçek MySQL 8 runtime davranış testleri ve okunabilirlik ratchet kapısı çalıştırıyor.
+
 ## 0.7.0 - 2026-09-06
 - Emlak: çok dilli satılık/kiralık ilan, şehir/ilçe/oda/fiyat/m² filtreleri, koordinat ve OpenStreetMap bağlantısı ile yönetim CRUD'u eklendi.
 - QR Menü: TR/EN/DE/AR kategori ve ürünler, RTL görünüm, yönetim ekranı, güvenli WebP yolu ve dış servissiz SVG QR üretimi eklendi.

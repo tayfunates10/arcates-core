@@ -1,1 +1,21 @@
-<?php return ['dashboard'=>'Dashboard','pages'=>'Pages','menus'=>'Menus','media'=>'Media'];
+<?php
+return [
+    'dashboard' => 'Dashboard',
+    'pages' => 'Pages',
+    'menus' => 'Menus',
+    'media' => 'Media',
+    'home_link' => 'Back to home',
+    'error_404_title' => 'Page not found',
+    'error_404_message' => 'The page you requested could not be found or may have moved.',
+    'error_419_title' => 'Session expired',
+    'error_419_message' => 'Security validation failed. Refresh the page and try again.',
+    'error_500_title' => 'Something went wrong',
+    'error_500_message' => 'The request could not be completed. Please try again shortly.',
+    'payment_result' => 'Payment result',
+    'payment_success' => 'Payment successful',
+    'payment_status' => 'Payment status',
+    'payment_retry' => 'Try payment again',
+    'order_code' => 'Order code',
+    'not_found' => 'No record found.',
+    'invalid_request' => 'Invalid request.',
+];

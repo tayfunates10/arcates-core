@@ -1,1 +1,21 @@
-<?php return ['dashboard'=>'Yönetim','pages'=>'Sayfalar','menus'=>'Menüler','media'=>'Medya'];
+<?php
+return [
+    'dashboard' => 'Yönetim',
+    'pages' => 'Sayfalar',
+    'menus' => 'Menüler',
+    'media' => 'Medya',
+    'home_link' => 'Ana sayfaya dön',
+    'error_404_title' => 'Sayfa bulunamadı',
+    'error_404_message' => 'Aradığınız sayfa bulunamadı veya taşınmış olabilir.',
+    'error_419_title' => 'Oturum süresi doldu',
+    'error_419_message' => 'Güvenlik doğrulaması geçersiz. Sayfayı yenileyip tekrar deneyin.',
+    'error_500_title' => 'Bir hata oluştu',
+    'error_500_message' => 'İşlem tamamlanamadı. Lütfen kısa süre sonra tekrar deneyin.',
+    'payment_result' => 'Ödeme sonucu',
+    'payment_success' => 'Ödeme başarılı',
+    'payment_status' => 'Ödeme durumu',
+    'payment_retry' => 'Ödemeyi tekrar dene',
+    'order_code' => 'Sipariş kodu',
+    'not_found' => 'Kayıt bulunamadı.',
+    'invalid_request' => 'Geçersiz istek.',
+];

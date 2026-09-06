@@ -31,6 +31,16 @@ return [
         'force_https' => true,
         'max_upload_bytes' => 5242880,
         'form_retention_days' => 180,
+        // Forwarded IP/protocol headers are trusted only from these exact proxy IPs.
+        'trusted_proxies' => [],
+    ],
+    'analytics' => [
+        'daily_path_limit' => 500,
+    ],
+    'commerce' => [
+        // Unpaid orders older than this can release reserved stock when no payment is still initialized.
+        'abandoned_order_minutes' => 1440,
+        'abandoned_order_batch' => 100,
     ],
     'newsletter' => [
         'secret' => '',

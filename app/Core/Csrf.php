@@ -7,8 +7,10 @@ final class Csrf
 {
     public static function token(): string
     {
-        if (empty($_SESSION['_csrf'])) { $_SESSION['_csrf'] = Security::randomToken(); }
-        return (string)$_SESSION['_csrf'];
+        if (empty($_SESSION['_csrf'])) {
+            $_SESSION['_csrf'] = Security::randomToken();
+        }
+        return (string) $_SESSION['_csrf'];
     }
 
     public static function field(): string
@@ -18,7 +20,7 @@ final class Csrf
 
     public static function validate(?string $token): bool
     {
-        $known = (string)($_SESSION['_csrf'] ?? '');
+        $known = (string) ($_SESSION['_csrf'] ?? '');
         return $known !== '' && is_string($token) && hash_equals($known, $token);
     }
 
@@ -26,7 +28,7 @@ final class Csrf
     {
         if (!self::validate($token)) {
             http_response_code(419);
-            throw new \RuntimeException('Geçersiz CSRF token.');
+            throw new CsrfException('Geçersiz CSRF token.');
         }
     }
 }
