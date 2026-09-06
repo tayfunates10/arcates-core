@@ -34,7 +34,12 @@ return [
     ],
     'integrations' => [
         'payment_provider' => null,
-        'payment_sdk_path' => null,
+        'payment_sdk_path' => __DIR__ . '/integrations/iyzipay/IyzipayBootstrap.php',
+        'iyzico' => [
+            'api_key' => '',
+            'secret_key' => '',
+            'base_url' => 'https://sandbox-api.iyzipay.com',
+        ],
         'marketplace' => [],
         'einvoice' => [],
     ],
