@@ -34,6 +34,25 @@ $throws = static function (callable $fn, string $class = \Throwable::class): boo
     }
 };
 
+// bootstrap.php genel bir exception handler kurar: yakalanmayan bir hata temalı hata
+// sayfasını basıp betiği NORMAL sonlandırır, yani çıkış kodu 0 olur. Bu, veritabanı
+// erişilemezken bu paketin sessizce "geçmesine" yol açıyordu. İki koruma:
+//   1) DB erişilebilirliği önden doğrulanır,
+//   2) yakalanmayan her hata açıkça 1 ile çıkar.
+set_exception_handler(static function (\Throwable $e): void {
+    fwrite(STDERR, 'Runtime testleri yakalanmayan hata ile durdu: ' . $e::class . ': ' . $e->getMessage() . PHP_EOL);
+    exit(1);
+});
+try {
+    $probe = App::db()->fetch('SELECT 1 AS ok');
+    if ((int) ($probe['ok'] ?? 0) !== 1) {
+        throw new \RuntimeException('SELECT 1 beklenen sonucu dondurmedi.');
+    }
+} catch (\Throwable $e) {
+    fwrite(STDERR, 'Runtime MySQL testleri calisan bir veritabani gerektirir: ' . $e->getMessage() . PHP_EOL);
+    exit(1);
+}
+
 $config = (array) $GLOBALS['arcates_config'];
 @unlink(ARCATES_ROOT . '/install/install.lock');
 @unlink(ARCATES_ROOT . '/install/install.running');
