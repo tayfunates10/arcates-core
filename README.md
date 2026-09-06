@@ -71,6 +71,14 @@ Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneği
 - `app.url + menu slug + locale` QR kapasitesini aşarsa menü oluşturulurken açık hata verilir
 - Örnek public yollar: `/menu/{slug}/{locale}` ve `/menu/{slug}/qr.svg?locale=tr`
 
+## Gönderi Takip
+- Nakliyat ve lojistik müşterileri için bağımsız takip kodu ve durum zaman çizelgesi
+- Admin panelinden gönderi oluşturma ve konum/durum olayı ekleme
+- Durumlar: oluşturuldu, teslim alındı, yolda, dağıtımda, teslim edildi, iptal ve sorun
+- Public `/gonderi-takip?kod=...` ekranı müşteri adı, telefon, adres veya iç referans gibi PII alanlarını göstermez
+- Public sorgu takip kodu biçimini doğrular ve 10 dakikada 30 sorgu limiti uygular
+- Olay ekleme transaction içinde gönderinin güncel durumu/konumuyla birlikte işlenir
+
 ## Dallar
 - `main`: kararlı sürüm
 - `dev`: entegrasyon dalı
