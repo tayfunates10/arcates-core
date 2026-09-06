@@ -87,6 +87,18 @@ return [
                 'max_purchasable_quantity' => 1000,
             ],
         ],
-        'einvoice' => [],
+        'einvoice' => [
+            'provider' => 'uyumsoft',
+            'max_xml_bytes' => 2097152,
+            'uyumsoft' => [
+                'wsdl' => 'http://efatura-test.uyumsoft.com.tr/Services/BasicIntegration?wsdl',
+                'username' => '',
+                'password' => '',
+                'timeout' => 20,
+                'send_operation' => 'SendInvoice',
+                'status_operation' => 'QueryOutboxInvoiceStatus',
+                'user_query_operation' => 'IsEInvoiceUser',
+            ],
+        ],
     ],
 ];
