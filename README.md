@@ -24,6 +24,15 @@ cPanel/shared-hosting ortamında document-root'u `public/` yapamıyorsanız proj
 7. Ödenmemiş terk edilmiş sipariş stokları için `php scripts/release_abandoned_orders.php` cron'u tanımlayın. Varsayılan eşik 1440 dakika (24 saat), batch 100'dür.
 8. Kalıcı public rate-limit kayıtlarının büyümemesi için günlük `php scripts/purge_rate_limits.php 48` cron'u tanımlayın; varsayılan politika 48 saatten eski bucket'ları siler.
 
+## Yerelde çalıştırma
+MySQL 8 üzerinde boş veritabanı ve `config.php` hazırlandıktan sonra proje kökünde:
+
+```bash
+php -S 127.0.0.1:8080 -t public scripts/dev_router.php
+```
+
+Ardından `http://127.0.0.1:8080/install` adresinden ilk admin kurulumu yapılabilir. Built-in server router'ı yalnız yerel geliştirme içindir; production'da kullanılmamalıdır. Ayrıntılı adımlar ve güvenlik notları: `docs/local-development.md`.
+
 ## Çekirdek altyapı
 Router/autoloader, PDO prepared statements, admin/editor rolleri, `password_hash`, CSRF, XSS escape, güvenli session cookie, kalıcı public rate-limit, hesap+IP giriş limiti, hata logu, takipli migration ve yedekleme içerir.
 
@@ -124,14 +133,21 @@ Yerel statik/kontrat paketi:
 php tests/run.php
 ```
 
+Clean install + gerçek HTTP smoke (CI MySQL fixture ortamında):
+
+```bash
+bash tests/http_smoke.sh
+```
+
 CI, PHP 8.1/8.2/8.3 üzerinde:
 - tüm PHP dosyalarının syntax kontrolünü,
 - statik/kontrat testlerini,
 - gerçek MySQL 8 servisiyle runtime davranış testlerini,
 - terk edilmiş sipariş stok/kupon iade runtime testini,
+- temiz kurulum + HTTP smoke akışını,
 - okunabilirlik ratchet kapısını çalıştırır.
 
 Okunabilirlik kapısı yeni dosyalarda 400 karakter/satır üstünü reddeder; mevcut teknik borç `tests/fixtures/readability_baseline.json` ile yalnız azalabilir, büyüyemez.
 
 ## Sürüm
-Bu dal PR #22 güvenlik/runtime düzeltmelerini **0.7.1** olarak hazırlar.
+Güncel sürüm: **0.7.2**.
