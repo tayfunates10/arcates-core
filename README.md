@@ -65,6 +65,14 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 - cURL timeout/bağlantı kesintisi `send_unknown` olarak kilitlenir; dış sistem kontrol edilmeden tekrar gönderim yapılamaz.
 - Panel `/yonetim/muhasebe`; ayrıntılı kabul: `docs/muhasebe-entegrasyon.md`.
 
+### Ziyaretçi istatistikleri
+- Birinci taraf, çerezsiz günlük sayfa görüntüleme agregasyonu.
+- IP adresi, kullanıcı ID'si, session ID veya tam referrer URL saklanmaz.
+- Sorgu string'i atılır; yalnız temizlenmiş path ve dış referrer host tutulur.
+- `DNT: 1`, bot/crawler trafiği, admin, asset, upload, install, sitemap ve robots istekleri sayılmaz.
+- Ham olay tablosu yerine `analytics_daily` içinde gün/path/referrer bazında sayaç artırılır.
+- Panel `/yonetim/istatistik`; 7/30/90 günlük toplam, günlük trafik, popüler sayfalar ve kaynaklar gösterilir.
+
 ## Sektörel modüller
 - Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
 - QR Menü: çok dil/RTL, kategori/ürün ve dış servissiz SVG QR.
