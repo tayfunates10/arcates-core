@@ -32,6 +32,10 @@ return [
         'max_upload_bytes' => 5242880,
         'form_retention_days' => 180,
     ],
+    'newsletter' => [
+        'secret' => '',
+        'send_batch' => 50,
+    ],
     'integrations' => [
         'payment_provider' => null,
         'payment_sdk_path' => __DIR__ . '/integrations/iyzipay/IyzipayBootstrap.php',
