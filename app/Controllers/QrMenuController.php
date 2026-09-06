@@ -10,6 +10,6 @@ final class QrMenuController
  }
  public function qr(string $slug): void
  {
-  $locale=(string)($_GET['locale']??'tr');if(!Locale::valid($locale))$locale='tr';$menu=App::db()->fetch('SELECT id FROM qr_menus WHERE slug=? AND is_active=1',[$slug]);if(!$menu){http_response_code(404);return;}$url=rtrim((string)App::config('app.url',''),'/').'/menu/'.rawurlencode($slug).'/'.rawurlencode($locale);$svg=QrCode::svg($url);header('Content-Type: image/svg+xml; charset=UTF-8');header('Cache-Control: public, max-age=3600');echo $svg;
+  $locale=(string)($_GET['locale']??'tr');if(!Locale::valid($locale))$locale='tr';$menu=App::db()->fetch('SELECT id FROM qr_menus WHERE slug=? AND is_active=1',[$slug]);if(!$menu){http_response_code(404);return;}$url=rtrim((string)App::config('app.url',''),'/').'/menu/'.rawurlencode($slug).'/'.rawurlencode($locale);try{$svg=QrCode::svg($url);}catch(\RuntimeException $e){http_response_code(422);header('Content-Type: text/plain; charset=UTF-8');echo 'QR üretilemedi: '.Security::escape($e->getMessage());return;}header('Content-Type: image/svg+xml; charset=UTF-8');header('Cache-Control: public, max-age=3600');echo $svg;
  }
 }
