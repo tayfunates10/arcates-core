@@ -1,1 +1,21 @@
-<?php return ['dashboard'=>'Verwaltung','pages'=>'Seiten','menus'=>'Menüs','media'=>'Medien'];
+<?php
+return [
+    'dashboard' => 'Verwaltung',
+    'pages' => 'Seiten',
+    'menus' => 'Menüs',
+    'media' => 'Medien',
+    'home_link' => 'Zur Startseite',
+    'error_404_title' => 'Seite nicht gefunden',
+    'error_404_message' => 'Die angeforderte Seite wurde nicht gefunden oder wurde verschoben.',
+    'error_419_title' => 'Sitzung abgelaufen',
+    'error_419_message' => 'Die Sicherheitsprüfung ist fehlgeschlagen. Bitte laden Sie die Seite neu und versuchen Sie es erneut.',
+    'error_500_title' => 'Ein Fehler ist aufgetreten',
+    'error_500_message' => 'Die Anfrage konnte nicht abgeschlossen werden. Bitte versuchen Sie es in Kürze erneut.',
+    'payment_result' => 'Zahlungsergebnis',
+    'payment_success' => 'Zahlung erfolgreich',
+    'payment_status' => 'Zahlungsstatus',
+    'payment_retry' => 'Zahlung erneut versuchen',
+    'order_code' => 'Bestellcode',
+    'not_found' => 'Kein Eintrag gefunden.',
+    'invalid_request' => 'Ungültige Anfrage.',
+];
