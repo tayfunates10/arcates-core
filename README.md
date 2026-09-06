@@ -54,6 +54,17 @@ Oda/masa/seans birimleri, sezonluk fiyat, müsaitlik, `FOR UPDATE` ile çift rez
 - Credential'lar yalnız `config.php` içinde tutulur.
 - Ayrıntılı test/canlı kabul: `docs/e-belge-entegrasyon.md`.
 
+### Muhasebe aktarımı
+- Logo/Netsis NetOpenX REST, Mikro API ve Paraşüt API v4 gateway adapterleri.
+- Firma/cari/muhasebe hesabı/kategori/ürün ID'leri kurulumdan kuruluma değiştiği için kod içinde sahte eşleme yoktur; panelde sağlayıcıya özel JSON şablon profili tanımlanır.
+- Güvenli şablon motoru yalnız `{{order.*}}`, `{{item.*}}` ve `$each=items` yapısını işler; `eval` veya dinamik PHP çalıştırmaz.
+- Logo varsayılanı `POST /api/v2/GLSlips`, Mikro varsayılanı `POST /Api/apiMethods/MuhasebeFisKaydetV2`, Paraşüt `POST /v4/{company_id}/sales_invoices`.
+- Paraşüt OAuth2 access token veya resmî password grant desteklenir; diğer tüm credential'lar gibi sırlar yalnız `config.php` içindedir.
+- Yalnız `paid` ve iptal edilmemiş siparişler aktarılabilir; payload SHA-256 ile kaydedilir.
+- Dış API çağrısı DB transaction dışında; `claim_token` eşzamanlı çift gönderimi engeller.
+- cURL timeout/bağlantı kesintisi `send_unknown` olarak kilitlenir; dış sistem kontrol edilmeden tekrar gönderim yapılamaz.
+- Panel `/yonetim/muhasebe`; ayrıntılı kabul: `docs/muhasebe-entegrasyon.md`.
+
 ## Sektörel modüller
 - Emlak / ilan: çok dil, satılık/kiralık, filtreler ve OpenStreetMap.
 - QR Menü: çok dil/RTL, kategori/ürün ve dış servissiz SVG QR.
