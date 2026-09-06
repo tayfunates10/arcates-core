@@ -64,11 +64,17 @@ final class RateLimiter
     private function databaseAllowed(string $key, int $max, int $windowSeconds): bool
     {
         return $this->db->transaction(function (Database $db) use ($key, $max, $windowSeconds): bool {
+            // Pencere karşılaştırması TAMAMEN SQL tarafında yapılır. window_started_at değeri
+            // MySQL'in NOW() saatiyle yazılıyor; bunu PHP'nin time()/strtotime() değeriyle
+            // kıyaslamak, MySQL ile PHP farklı saat diliminde çalıştığında (yaygın kurulum:
+            // MySQL UTC, app.timezone Europe/Istanbul) sabit bir kayma üretir ve pencere
+            // her çağrıda "dolmuş" görünür; hits 1'e sıfırlanır ve limit hiç devreye girmez.
+            $expiredExpr = sprintf('(window_started_at <= (NOW() - INTERVAL %d SECOND))', $windowSeconds);
             $row = $db->fetch(
-                'SELECT bucket_key, window_started_at, hits FROM rate_limit_buckets WHERE bucket_key = ? FOR UPDATE',
+                "SELECT hits, {$expiredExpr} AS window_expired FROM rate_limit_buckets "
+                . 'WHERE bucket_key = ? FOR UPDATE',
                 [$key]
             );
-            $now = time();
 
             if (!$row) {
                 $db->execute(
@@ -79,8 +85,7 @@ final class RateLimiter
                 return true;
             }
 
-            $started = strtotime((string) $row['window_started_at']) ?: 0;
-            if ($started <= $now - $windowSeconds) {
+            if ((int) $row['window_expired'] === 1) {
                 $db->execute(
                     'UPDATE rate_limit_buckets SET window_started_at = NOW(), hits = 1, updated_at = NOW() '
                     . 'WHERE bucket_key = ?',
