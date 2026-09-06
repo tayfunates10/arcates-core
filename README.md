@@ -79,6 +79,15 @@ Composer kullanmadan resmi `iyzico/iyzipay-php` sürümünü indirin ve örneği
 - Public sorgu takip kodu biçimini doğrular ve 10 dakikada 30 sorgu limiti uygular
 - Olay ekleme transaction içinde gönderinin güncel durumu/konumuyla birlikte işlenir
 
+## Hizmet + Fiyatlandırma
+- Klinik, termal, kuaför ve spor salonu gibi sektörler için ortak fiyat tablosu
+- TR/EN/DE/AR hizmet başlığı, slug ve kısa açıklama
+- Hizmet başına birden fazla paket/işlem fiyatı
+- Para birimi, `seans/ay/kişi` gibi birim etiketi, not ve öne çıkarma
+- Arapça public görünüm RTL; tüm kullanıcı verileri escape edilir
+- Yönetim panelinden hizmet ve fiyat satırı ekleme; tüm POST işlemleri CSRF korumalı
+- Public yol: `/hizmet-fiyatlari/{locale}`
+
 ## Dallar
 - `main`: kararlı sürüm
 - `dev`: entegrasyon dalı
