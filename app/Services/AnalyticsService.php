@@ -8,8 +8,6 @@ use Arcates\Core\Logger;
 
 final class AnalyticsService
 {
-    private const DAILY_PATH_LIMIT = 500;
-
     public function track(): void
     {
         try {
@@ -33,9 +31,18 @@ final class AnalyticsService
                 return;
             }
 
-            $count = App::db()->fetch('SELECT COUNT(*) AS total FROM analytics_daily WHERE day=CURDATE()');
-            if ((int) ($count['total'] ?? 0) >= self::DAILY_PATH_LIMIT) {
-                $path = '/diger';
+            $limit = max(25, min(5000, (int) App::config('analytics.daily_path_limit', 500)));
+            $count = App::db()->fetch(
+                'SELECT COUNT(DISTINCT path) AS total FROM analytics_daily WHERE day=CURDATE()'
+            );
+            if ((int) ($count['total'] ?? 0) >= $limit) {
+                $known = App::db()->fetch(
+                    'SELECT 1 AS found FROM analytics_daily WHERE day=CURDATE() AND path=? LIMIT 1',
+                    [$path]
+                );
+                if (!$known) {
+                    $path = '/diger';
+                }
             }
 
             $referrer = $this->referrerHost();
