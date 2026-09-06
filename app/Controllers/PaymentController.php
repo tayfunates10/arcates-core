@@ -5,9 +5,12 @@ namespace Arcates\Controllers;
 
 use Arcates\Core\App;
 use Arcates\Core\Csrf;
+use Arcates\Core\Locale;
 use Arcates\Core\Logger;
 use Arcates\Core\Security;
+use Arcates\Core\Translator;
 use Arcates\Payments\GatewayFactory;
+use Arcates\Payments\PaymentVerifier;
 use Arcates\Services\Mailer;
 
 final class PaymentController
@@ -95,7 +98,17 @@ final class PaymentController
         $alreadyPaid = (string) $attempt['payment_status'] === 'paid';
         $providerPaid = $result['status'] === 'success'
             && strtoupper((string) $result['payment_status']) === 'SUCCESS';
-        $paid = $alreadyPaid || ($providerPaid && $this->amountMatches($attempt, $result));
+        $amountMatches = PaymentVerifier::matches((float) $attempt['grand_total'], $result, 'TRY');
+        $paid = $alreadyPaid || ($providerPaid && $amountMatches);
+
+        if ($providerPaid && !$amountMatches) {
+            Logger::error('Payment amount mismatch', [
+                'order_id' => (int) $attempt['order_id'],
+                'expected' => (string) $attempt['grand_total'],
+                'actual' => (string) ($result['paid_price'] ?? ''),
+                'currency' => (string) ($result['currency'] ?? ''),
+            ]);
+        }
 
         App::db()->transaction(function ($db) use ($attempt, $result, $paid): void {
             $db->execute(
@@ -126,33 +139,12 @@ final class PaymentController
         $this->renderResult($paid, (string) $attempt['public_code'], $message, !$paid);
     }
 
-    private function amountMatches(array $attempt, array $result): bool
-    {
-        $expected = (int) round(((float) $attempt['grand_total']) * 100);
-        $actual = (int) round(((float) ($result['paid_price'] ?? 0)) * 100);
-        $currency = strtoupper(trim((string) ($result['currency'] ?? '')));
-        if ($currency === 'TL') {
-            $currency = 'TRY';
-        }
-        if ($expected === $actual && $currency === 'TRY') {
-            return true;
-        }
-
-        Logger::error('Payment amount mismatch', [
-            'order_id' => (int) $attempt['order_id'],
-            'expected_minor' => $expected,
-            'actual_minor' => $actual,
-            'currency' => $currency,
-        ]);
-        return false;
-    }
-
     private function showOrderStatus(): void
     {
         $code = trim((string) ($_GET['order'] ?? ''));
         if ($code === '') {
             http_response_code(400);
-            echo 'Eksik ödeme tokenı.';
+            echo Security::escape(Translator::t('invalid_request'));
             return;
         }
         $order = App::db()->fetch(
@@ -170,17 +162,23 @@ final class PaymentController
 
     private function renderResult(bool $paid, string $code, string $message, bool $retry): void
     {
+        $locale = Translator::requestLocale();
+        $dir = Locale::rtl($locale) ? 'rtl' : 'ltr';
         $safeCode = Security::escape($code);
         $safeMessage = Security::escape($message);
-        echo '<!doctype html><html lang="tr" dir="ltr"><meta charset="utf-8">'
-            . '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            . '<title>Ödeme sonucu</title><link rel="stylesheet" href="/assets/css/theme.css"><body>'
-            . '<main class="container"><h1>' . ($paid ? 'Ödeme başarılı' : 'Ödeme durumu') . '</h1>'
-            . '<p>' . $safeMessage . '</p><p>Sipariş kodu: ' . $safeCode . '</p>';
+        $title = Translator::t('payment_result', $locale);
+        $heading = Translator::t($paid ? 'payment_success' : 'payment_status', $locale);
+
+        echo '<!doctype html><html lang="' . Security::escape($locale) . '" dir="' . $dir . '">'
+            . '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+            . '<title>' . Security::escape($title) . '</title>'
+            . '<link rel="stylesheet" href="/assets/css/theme.css"><body><main class="container">'
+            . '<h1>' . Security::escape($heading) . '</h1><p>' . $safeMessage . '</p>'
+            . '<p>' . Security::escape(Translator::t('order_code', $locale)) . ': ' . $safeCode . '</p>';
         if ($retry) {
             echo '<form method="post" action="/odeme/baslat">' . Csrf::field()
                 . '<input type="hidden" name="order" value="' . $safeCode . '">'
-                . '<button>Ödemeyi tekrar dene</button></form>';
+                . '<button>' . Security::escape(Translator::t('payment_retry', $locale)) . '</button></form>';
         }
         echo '</main></body></html>';
     }
