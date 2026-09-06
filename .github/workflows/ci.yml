@@ -44,6 +44,7 @@ jobs:
         run: |
           cp tests/fixtures/config.ci.php config.php
           php tests/runtime_mysql.php
+          php tests/runtime_abandoned_mysql.php
 
       - name: Readability guard
         run: php tests/readability.php
