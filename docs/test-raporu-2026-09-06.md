@@ -987,7 +987,11 @@ güncel durum:
 | BULGU-10 (slug) | `ba4bcae` | ✅ Unicode slug desteği; Arapça/Rusça başlıklar artık ayrışıyor. |
 | BULGU-14 (HEAD) | `d2ab4bc` | ✅ `HEAD` GET gibi ele alınıyor (gövde `ob_end_clean` ile atılıyor); `OPTIONS` 204 + `Allow` başlığı döndürüyor; 404 temalı sayfaya taşındı. |
 
-Kalan bulgular (13, 16, 19, 20) için bu dalda henüz düzeltme yok.
+| BULGU-16 (muhasebe veri kapsamı) | `854caa2`, `7ce61df` | ✅ `SELECT *` yerine alan izin listesi kullanılıyor; `payment_reference` artık dış muhasebe API'sine gitmiyor. Şablon genişlemesi de sınırlandırıldı (iç içe `$each` çarpımsal büyümesi). |
+| BULGU-19 (sepet sınırı) | `c6984d0` | ✅ Farklı varyant sayısı sınırlandırıldı. |
+| BULGU-13 (dağıtım), 14 ek | `a1627f5`, `8b23d26`, `240bf25` | ✅ Route sertleştirme, güvenilir vekil (trusted proxy) ile IP çözümü ve ön denetleyici biçimlendirmesi eklendi. |
+
+Kalan bulgu: 20 (satır uzunluğu / kod biçimi) — kısmen düzeltildi (`a1627f5` ön denetleyiciyi biçimlendirdi).
 
 **Yeni açılan konu (BULGU-17 düzeltmesinin yan etkisi):** Ödeme başarısızlığı artık
 `OrderService::cancel()` çağırmıyor, dolayısıyla **stok iade edilmiyor** — yeniden deneme
