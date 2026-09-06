@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.2 - 2026-09-06
+- Temiz yerel kurulum benzeri HTTP smoke testi eklendi: boş MySQL 8 veritabanında `/install`, kurulum kilidi, admin login/logout, ana sayfa, HEAD/OPTIONS, statik asset ve upload koruması gerçek HTTP üzerinden doğrulanıyor.
+- PHP built-in server için güvenli `scripts/dev_router.php` eklendi; yalnız `public/` statik dosyaları ve izinli görsel türlerini `/uploads/` üzerinden servis ediyor, PHP benzeri dosyaları reddediyor.
+- Dinamik `/ {locale}/{slug}` sayfası eşleşip kayıt bulunamadığında düz Türkçe çıktı yerine merkezî, temalı ve yerelleştirilmiş `ErrorPage` kullanılacak şekilde düzeltildi.
+- CI matrisi PHP 8.1/8.2/8.3 üzerinde clean-install HTTP smoke adımını da çalıştıracak şekilde genişletildi.
+- Yerel geliştirme ve tek komutluk built-in server akışı `docs/local-development.md` içinde belgelendi.
+
 ## 0.7.1 - 2026-09-06
 - PR #22 gelişmiş kullanım/runtime denetiminde bulunan 20 bulgunun tamamı için düzeltme veya kalıcı CI koruması eklendi.
 - Kurulum kilidi gerçek dosya sistemi davranışıyla güvenli hale getirildi; kilit dizini oluşturma/yazma hataları fail-closed, mevcut kullanıcı bulunan sistemde yeniden kurulum reddediliyor.
