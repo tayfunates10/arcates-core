@@ -74,7 +74,7 @@ return [
                 'seller_id' => '',
                 'api_key' => '',
                 'api_secret' => '',
-                'storefront_code' => '',
+                'storefront_code' => 'TR',
                 'user_agent' => 'ArcatesCore/0.7',
             ],
             'hepsiburada' => [
