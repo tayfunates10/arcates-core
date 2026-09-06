@@ -39,8 +39,11 @@ if (str_starts_with($decoded, '/uploads/')) {
         return true;
     }
 
+    $extension = strtolower((string) pathinfo($candidate, PATHINFO_EXTENSION));
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($candidate) ?: 'application/octet-stream';
-    if (!str_starts_with($mime, 'image/')) {
+    if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)
+        || !str_starts_with($mime, 'image/')
+    ) {
         http_response_code(403);
         echo 'Forbidden';
         return true;
@@ -48,6 +51,7 @@ if (str_starts_with($decoded, '/uploads/')) {
 
     header('Content-Type: ' . $mime);
     header('Content-Length: ' . (string) filesize($candidate));
+    header('X-Content-Type-Options: nosniff');
     readfile($candidate);
     return true;
 }
